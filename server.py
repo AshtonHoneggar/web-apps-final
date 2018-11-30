@@ -203,10 +203,10 @@ def download_report():
     for user in report:
         csv = csv + "%s,%s,%s,%s\n" % (user['username'], user['v1'], user['v2'], user['v3'])
 
-    with TemporaryFile('w+b') as tf:
-        tf.write(csv.encode())
-        tf.seek(0)
-        return send_file(tf, as_attachment=True, attachment_filename="report.csv")
+    tf = TemporaryFile('w+b')
+    tf.write(csv.encode())
+    tf.seek(0)
+    return send_file(tf, as_attachment=True, attachment_filename="report.csv")
 
 
 @app.route('/report/sites', methods=['GET'])

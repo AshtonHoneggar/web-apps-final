@@ -3,34 +3,47 @@
 // // Source: https://www.zeolearn.com/magazine/connecting-reactjs-frontend-with-nodejs-backend
 // // Date pulled: 11/29/2018 
 
-
-import axios, { post } from 'axios';
-
 'use strict';
 
 const e = React.createElement;
 
 class UsersFileUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    state = {selectedFile: null};
-    this.fileChangedHandler= this.fileChangedHandler.bind(this);
-    this.uploadHandler= this.uploadHandler.bind(this);
+    constructor(props) {
+        super(props);
+        this. state = {selectedFile: null};
+        this.fileChangedHandler= this.fileChangedHandler.bind(this);
+        this.uploadHandler= this.uploadHandler.bind(this);
+    }
+    
+    fileChangedHandler(event) {
+        this.setState({selectedFile: event.target.files[0]})
+    }
 
-fileChangedHandler = (event) => {
-  this.setState({selectedFile: event.target.files[0]})
-}
-
-uploadHandler = () => {
-  const formData = new FormData()
-  formData.append('myFile', this.state.selectedFile, this.state.selectedFile.name)
-  axios.post('http://localhost:8080/upload/users', formData)
-}
+    uploadHandler(event) {
+        event.preventDefault();
+        const formData = new FormData()
+        formData.append('file', this.state.selectedFile, this.state.selectedFile.name)
+        $.ajax({
+            type: 'POST',
+            url: '/upload/users',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: response => {
+                console.log(response);
+            },
+            error: response => {
+                console.log(response);
+            }
+        });
+    }
 
   render() {
     return (
-      <input type="file" onChange={this.fileChangedHandler}>
-      <button onClick={this.uploadHandler}>Upload</button>
+            <form encType="multipart/form-data" onSubmit={this.uploadHandler}>
+                <input type="file" name="file" onChange={this.fileChangedHandler} />
+                <input type="submit" />
+            </form>
     );
   }
 }
