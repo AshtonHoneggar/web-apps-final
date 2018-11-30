@@ -233,6 +233,18 @@ def get_user_report():
     return jsonify(report=get_users_votes(), succeed=True)
 
 
+@app.route('/instructor.html', methods=['GET'])
+def instructor_dashboard():
+    token = session.get('token')
+    user = get_user_from_token(token)
+    if user is None:
+        return jsonify(succeed=False, error="must be logged in"), 403
+    if user[1].lower() != "admin":
+        return jsonify(succeed=False, error="insufficient permissions"), 403
+
+    return send_from_directory('static', 'instructor.html')
+
+
 @app.route('/<path:path>')
 def file_server(path):
     return send_from_directory('static', path)
